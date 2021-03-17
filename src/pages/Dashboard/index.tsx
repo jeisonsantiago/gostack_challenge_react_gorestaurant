@@ -28,6 +28,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // TODO LOAD FOODS
+      const foodList = await api.get('http://localhost:3333/foods');
+      setFoods(foodList.data);
     }
 
     loadFoods();
@@ -38,6 +40,29 @@ const Dashboard: React.FC = () => {
   ): Promise<void> {
     try {
       // TODO ADD A NEW FOOD PLATE TO THE API
+      const lastIDFromFoods = foods.length;
+
+      const { name, description, price, image } = food;
+
+      // test
+      // const imageT = `https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food2.png`;
+
+      // assemble object
+      const foodAdd = {
+        id: lastIDFromFoods + 1,
+        name,
+        description,
+        price,
+        available: true,
+        image,
+      };
+
+      console.log(foodAdd);
+      // call api and add object
+      await api.post('http://localhost:3333/foods', foodAdd);
+
+      // update list foods
+      setFoods(prevFoods => [...prevFoods, foodAdd]);
     } catch (err) {
       console.log(err);
     }
@@ -46,7 +71,7 @@ const Dashboard: React.FC = () => {
   async function handleUpdateFood(
     food: Omit<IFoodPlate, 'id' | 'available'>,
   ): Promise<void> {
-    // TODO UPDATE A FOOD PLATE ON THE API
+    console.log(food);
   }
 
   async function handleDeleteFood(id: number): Promise<void> {
@@ -62,7 +87,8 @@ const Dashboard: React.FC = () => {
   }
 
   function handleEditFood(food: IFoodPlate): void {
-    // TODO SET THE CURRENT EDITING FOOD ID IN THE STATE
+    setEditingFood(food);
+    toggleEditModal();
   }
 
   return (
