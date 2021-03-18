@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // TODO LOAD FOODS
-      const foodList = await api.get('http://localhost:3333/foods');
+      const foodList = await api.get('/foods');
       setFoods(foodList.data);
     }
 
@@ -57,9 +57,9 @@ const Dashboard: React.FC = () => {
         image,
       };
 
-      console.log(foodAdd);
+      // console.log(foodAdd);
       // call api and add object
-      await api.post('http://localhost:3333/foods', foodAdd);
+      await api.post('/foods', foodAdd);
 
       // update list foods
       setFoods(prevFoods => [...prevFoods, foodAdd]);
@@ -71,11 +71,33 @@ const Dashboard: React.FC = () => {
   async function handleUpdateFood(
     food: Omit<IFoodPlate, 'id' | 'available'>,
   ): Promise<void> {
-    console.log(food);
+    // console.log(editingFood);
+    // console.log(food);
+
+    // update food on useState array
+    const { name, price, image, description } = food;
+
+    const updatedFood = {
+      id: editingFood.id,
+      name,
+      description,
+      price,
+      available: editingFood.available,
+      image,
+    };
+
+    setFoods(currentFoods =>
+      currentFoods.map(currentFood =>
+        currentFood.id === editingFood.id ? updatedFood : currentFood,
+      ),
+    );
   }
 
   async function handleDeleteFood(id: number): Promise<void> {
     // TODO DELETE A FOOD PLATE FROM THE API
+    setFoods(currentFoods =>
+      currentFoods.filter(currentFood => currentFood.id !== id),
+    );
   }
 
   function toggleModal(): void {
